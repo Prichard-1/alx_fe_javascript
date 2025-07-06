@@ -53,28 +53,18 @@ function populateCategories() {
 
 // Display filtered quote
 function showNextQuote() {
-  const display = document.getElementById("quoteDisplay");
-  while (display.firstChild) display.removeChild(display.firstChild);
+  const category = document.getElementById("categoryFilter").value;
+  const visibleQuotes = category === "all"
+    ? quotes
+    : quotes.filter(q => q.category === category);
 
-  const selected = document.getElementById("categoryFilter").value;
-  const visible = selected === "all" ? quotes : quotes.filter(q => q.category === selected);
+  if (currentIndex >= visibleQuotes.length) currentIndex = 0;
 
-  if (visible.length === 0) {
-    const p = document.createElement("p");
-    p.textContent = "No quotes found.";
-    display.appendChild(p);
-    return;
-  }
-
-  if (currentIndex >= visible.length) currentIndex = 0;
-
-  const quote = visible[currentIndex];
-  const p = document.createElement("p");
-  p.textContent = `"${quote.text}" — ${quote.category}`;
-  display.appendChild(p);
-
+  const quote = visibleQuotes[currentIndex];
+  // Display using createElement() and textContent
   currentIndex++;
 }
+
 
 // Filter quotes on category change
 function filterQuotes() {
