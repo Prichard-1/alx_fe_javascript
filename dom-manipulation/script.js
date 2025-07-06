@@ -201,7 +201,7 @@ function fetchQuotesFromServer() {
     .catch(() => []);
 }
 
-function syncWithServer() {
+asyn function syncWithServer() {
   fetchQuotesFromServer().then(serverQuotes => {
     const newQuotes = serverQuotes.filter(
       sq => !quotes.some(lq => lq.text === sq.text)
@@ -216,6 +216,9 @@ function syncWithServer() {
     }
   });
 }
+const p = document.createElement("p");
+p.textContent = `"${quote.text}" — ${quote.category}`;
+quoteDisplay.appendChild(p);
 
 // Setup everything
 document.getElementById("newQuote").addEventListener("click", showNextQuote);
