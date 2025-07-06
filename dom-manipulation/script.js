@@ -135,6 +135,19 @@ function importFromJsonFile(event) {
   };
   reader.readAsText(event.target.files[0]);
 }
+// fetch quote
+
+function fetchQuotesFromServer() {
+  return fetch("https://jsonplaceholder.typicode.com/posts?_limit=5")
+    .then(res => res.json())
+    .then(data => {
+      return data.map(post => ({
+        text: post.title,
+        category: "ServerSync"
+      }));
+    });
+}
+
 
 // Create form to add quotes
 function createAddQuoteForm() {
