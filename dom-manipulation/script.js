@@ -1,7 +1,7 @@
 let quotes = [];
 let currentIndex = 0;
 
-// Restore from local storage
+// Load from localStorage
 function loadQuotes() {
   const stored = localStorage.getItem("quotes");
   if (stored) {
@@ -9,26 +9,24 @@ function loadQuotes() {
   }
 }
 
-// Save to local storage
+// Save to localStorage
 function saveQuotes() {
   localStorage.setItem("quotes", JSON.stringify(quotes));
 }
 
-// Display filtered quotes
-function filterQuotes() {
-  const category = document.getElementById("categoryFilter").value;
-  localStorage.setItem("lastCategory", category);
-
-  currentIndex = 0;
-  showNextQuote();
+// Create and insert category dropdown
+function createCategoryFilter() {
+  const dropdown = document.createElement("select");
+  dropdown.id = "categoryFilter";
+  dropdown.addEventListener("change", filterQuotes);
+  document.body.insertBefore(dropdown, document.getElementById("quoteDisplay"));
 }
 
-// Populate filter dropdown with unique categories
+// Populate dropdown with categories
 function populateCategories() {
   const dropdown = document.getElementById("categoryFilter");
   const categories = [...new Set(quotes.map(q => q.category))];
 
-  // Clear old options
   while (dropdown.firstChild) {
     dropdown.removeChild(dropdown.firstChild);
   }
@@ -39,46 +37,26 @@ function populateCategories() {
   dropdown.appendChild(allOption);
 
   categories.forEach(cat => {
-    const option = document.createElement("option");
-    option.value = cat;
-    option.textContent = cat;
-    dropdown.appendChild(option);
+    const opt = document.createElement("option");
+    opt.value = cat;
+    opt.textContent = cat;
+    dropdown.appendChild(opt);
   });
 
-  // Restore last selected
-  const last = localStorage.getItem("lastCategory");
-  if (last) {
-    dropdown.value = last;
-  }
+  const saved = localStorage.getItem("lastCategory");
+  if (saved) dropdown.value = saved;
 }
 
-// Show quote based on currentIndex and selected category
+// Filter quotes by selected category
+function filterQuotes() {
+  const selected = document.getElementById("categoryFilter").value;
+  localStorage.setItem("lastCategory", selected);
+  currentIndex = 0;
+  showNextQuote();
+}
+
+// Show next quote in filtered list
 function showNextQuote() {
   const display = document.getElementById("quoteDisplay");
-  while (display.firstChild) {
-    display.removeChild(display.firstChild);
-  }
-
-  const selectedCategory = document.getElementById("categoryFilter").value;
-  let visibleQuotes = selectedCategory === "all"
-    ? quotes
-    : quotes.filter(q => q.category === selectedCategory);
-
-  if (visibleQuotes.length === 0) {
-    const p = document.createElement("p");
-    p.textContent = "No quotes in this category.";
-    display.appendChild(p);
-    return;
-  }
-
-  if (currentIndex >= visibleQuotes.length) currentIndex = 0;
-
-  const q = visibleQuotes[currentIndex];
-  const p = document.createElement("p");
-  p.textContent = `"${q.text}" — ${q.category}`;
-  display.appendChild(p);
-
-  currentIndex++;
-}
-
+  while (display.firstChild) display.removeChild(display.firstChild);
 
