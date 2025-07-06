@@ -147,6 +147,17 @@ function createAddQuoteForm() {
   container.appendChild(addButton);
   document.body.appendChild(container);
 }
+// fetch quote
+function fetchQuotesFromServer() {
+  return fetch("https://jsonplaceholder.typicode.com/posts?_limit=5")
+    .then(res => res.json())
+    .then(data => {
+      return data.map(post => ({
+        text: post.title,
+        category: "ServerSync"
+      }));
+    });
+}
 
 // Create import/export controls
 function createImportExportControls() {
