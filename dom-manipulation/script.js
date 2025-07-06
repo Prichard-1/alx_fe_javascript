@@ -137,16 +137,32 @@ function importFromJsonFile(event) {
 }
 // fetch quote
 
-function fetchQuotesFromServer() {
-  return fetch("https://jsonplaceholder.typicode.com/posts?_limit=5")
-    .then(res => res.json())
+function syncWithServer() {
+  fetch("https://jsonplaceholder.typicode.com/posts?_limit=5")
+    .then(response => response.json())
     .then(data => {
-      return data.map(post => ({
+      const newQuotes = data.map(post => ({
         text: post.title,
         category: "ServerSync"
       }));
+
+      const unique = newQuotes.filter(
+        sq => !quotes.some(q => q.text === sq.text)
+      );
+
+      if (unique.length > 0) {
+        quotes.push(...unique);
+        saveQuotes();
+        populateCategories();
+        notifyUser(`${unique.length} quote(s) synced from server.`);
+        showNextQuote();
+      }
+    })
+    .catch(error => {
+      console.error("Sync failed:", error);
     });
 }
+
 
 
 // Create form to add quotes
