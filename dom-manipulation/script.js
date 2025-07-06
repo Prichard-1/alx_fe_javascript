@@ -1,39 +1,3 @@
-let quotes = [];
-
-// DOM references
-const quoteDisplay = document.getElementById("quoteDisplay");
-const newQuoteButton = document.getElementById("newQuote");
-
-// Restore from local storage on load
-function loadQuotes() {
-  const stored = localStorage.getItem("quotes");
-  if (stored) {
-    quotes = JSON.parse(stored);
-  }
-}
-
-// Save to local storage
-function saveQuotes() {
-  localStorage.setItem("quotes", JSON.stringify(quotes));
-}
-
-// Show a random quote
-function showRandomQuote() {
-  while (quoteDisplay.firstChild) {
-    quoteDisplay.removeChild(quoteDisplay.firstChild);
-  }
-
-  if (quotes.length === 0) {
-    const noQuote = document.createElement("p");
-    noQuote.textContent = "No quotes available. Please add one.";
-    quoteDisplay.appendChild(noQuote);
-    return;
-  }
-
-  const { text, category } = quotes[Math.floor(Math.random() * quotes.length)];
-  const quoteText = document.createElement("p");
-  quoteText.textContent = `"${text}" — ${category}`;
-  quoteDisplay.appendChild(quoteText);
 }
 
 // Create form to add quotes
@@ -81,7 +45,11 @@ function exportToJsonFile() {
   const link = document.createElement("a");
   link.download = "quotes.json";
   link.href = url;
-  link.click();
+  linclick();
   URL.revokeObjectURL(url);
 }
+
+script.js[+] [unix] (05:05 06/07/2025)                                                                                                                                                  84,6 Bot
+-- INSERT --
+
 
