@@ -48,11 +48,14 @@ function populateCategories() {
 }
 
 // Display quote based on category filter
+let currentIndex = 0;
+
 function showNextQuote() {
-  const display = document.getElementById("quoteDisplay");
-  while (display.firstChild) {
-    display.removeChild(display.firstChild);
-  }
+  const filteredQuotes = quotes.filter(q => q.category === selectedCategory);
+  const quote = filteredQuotes[currentIndex];
+  currentIndex = (currentIndex + 1) % filteredQuotes.length;
+}
+
 
   const selected = document.getElementById("categoryFilter").value;
   const visibleQuotes = selected === "all"
