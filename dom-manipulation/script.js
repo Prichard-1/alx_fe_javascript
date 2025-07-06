@@ -135,35 +135,6 @@ function importFromJsonFile(event) {
   };
   reader.readAsText(event.target.files[0]);
 }
-// fetch quote
-
-function syncWithServer() {
-  fetch("https://jsonplaceholder.typicode.com/posts?_limit=5")
-    .then(response => response.json())
-    .then(data => {
-      const newQuotes = data.map(post => ({
-        text: post.title,
-        category: "ServerSync"
-      }));
-
-      const unique = newQuotes.filter(
-        sq => !quotes.some(q => q.text === sq.text)
-      );
-
-      if (unique.length > 0) {
-        quotes.push(...unique);
-        saveQuotes();
-        populateCategories();
-        notifyUser(`${unique.length} quote(s) synced from server.`);
-        showNextQuote();
-      }
-    })
-    .catch(error => {
-      console.error("Sync failed:", error);
-    });
-}
-
-
 
 // Create form to add quotes
 function createAddQuoteForm() {
@@ -173,4 +144,84 @@ function createAddQuoteForm() {
   quoteInput.id = "newQuoteText";
   quoteInput.placeholder = "Enter a new quote";
 
+  const categoryInput = document.createElement("input");
+  categoryInput.id = "newQuoteCategory";
+  categoryInput.placeholder = "Enter quote category";
 
+  const addButton = document.createElement("button");
+  addButton.textContent = "Add Quote";
+  addButton.addEventListener("click", addQuote);
+
+  container.appendChild(quoteInput);
+  container.appendChild(categoryInput);
+  container.appendChild(addButton);
+  document.body.appendChild(container);
+}
+
+// Create import/export controls
+function createImportExportControls() {
+  const controls = document.createElement("div");
+
+  const exportBtn = document.createElement("button");
+  exportBtn.textContent = "Export Quotes";
+  exportBtn.onclick = exportToJsonFile;
+
+  const importInput = document.createElement("input");
+  importInput.type = "file";
+  importInput.accept = ".json";
+  importInput.addEventListener("change", importFromJsonFile);
+
+  controls.appendChild(exportBtn);
+  controls.appendChild(importInput);
+  document.body.appendChild(controls);
+}
+
+// Notify user of sync/conflict updates
+function notifyUser(message) {
+  const div = document.createElement("div");
+  div.textContent = message;
+  div.style.background = "#fffae6";
+  div.style.padding = "10px";
+  div.style.margin = "10px 0";
+  div.style.border = "1px solid #ccc";
+  div.style.fontWeight = "bold";
+  document.body.insertBefore(div, document.body.firstChild);
+  setTimeout(() => div.remove(), 4000);
+}
+
+// Simulate server fetch and sync quotes
+function fetchQuotesFromServer() {
+  return fetch("https://jsonplaceholder.typicode.com/posts?_limit=5")
+    .then(res => res.json())
+    .then(data => data.map(post => ({
+      text: post.title,
+      category: "ServerSync"
+    })))
+    .catch(() => []);
+}
+
+function syncWithServer() {
+  fetchQuotesFromServer().then(serverQuotes => {
+    const newQuotes = serverQuotes.filter(
+      sq => !quotes.some(lq => lq.text === sq.text)
+    );
+
+    if (newQuotes.length > 0) {
+      quotes.push(...newQuotes);
+      saveQuotes();
+      populateCategories();
+      notifyUser(`${newQuotes.length} new quote(s) synced from server.`);
+      showNextQuote();
+    }
+  });
+}
+
+// Setup everything
+document.getElementById("newQuote").addEventListener("click", showNextQuote);
+loadQuotes();
+createCategoryFilter();
+populateCategories();
+createAddQuoteForm();
+createImportExportControls();
+showNextQuote();
+setInterval(syncWithServer, 30000); // every 30s
