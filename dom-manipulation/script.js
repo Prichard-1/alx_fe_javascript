@@ -183,5 +183,15 @@ populateCategories();
 createAddQuoteForm();
 createImportExportControls();
 showNextQuote();
+function rememberCurrentIndex() {
+  sessionStorage.setItem("lastIndex", currentIndex);
+}
+
+function restoreCurrentIndex() {
+  const stored = sessionStorage.getItem("lastIndex");
+  if (stored !== null) {
+    currentIndex = Number(stored);
+  }
+}
 
 
