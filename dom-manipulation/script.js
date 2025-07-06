@@ -1,55 +1,32 @@
-}
 
-// Create form to add quotes
-function createAddQuoteForm() {
-  const form = document.createElement("div");
+let currentIndex = 0;
 
-  const quoteInput = document.createElement("input");
-  quoteInput.id = "newQuoteText";
-  quoteInput.placeholder = "Enter a new quote";
+// Show quote by index instead of random
+function showNextQuote() {
+  const quoteDisplay = document.getElementById("quoteDisplay");
 
-  const categoryInput = document.createElement("input");
-  categoryInput.id = "newQuoteCategory";
-  categoryInput.placeholder = "Enter quote category";
+  // Clear previous content safely
+  while (quoteDisplay.firstChild) {
+    quoteDisplay.removeChild(quoteDisplay.firstChild);
+  }
 
-  const addButton = document.createElement("button");
-  addButton.textContent = "Add Quote";
-  addButton.addEventListener("click", addQuote);
-
-  form.appendChild(quoteInput);
-  form.appendChild(categoryInput);
-  form.appendChild(addButton);
-  document.body.appendChild(form);
-}
-
-// Add new quote
-function addQuote() {
-  const text = document.getElementById("newQuoteText").value.trim();
-  const category = document.getElementById("newQuoteCategory").value.trim();
-  if (!text || !category) {
-    alert("Please enter both a quote and a category.");
+  if (quotes.length === 0) {
+    const p = document.createElement("p");
+    p.textContent = "No quotes available. Add one!";
+    quoteDisplay.appendChild(p);
     return;
   }
-  quotes.push({ text, category });
-  saveQuotes();
-  showRandomQuote();
 
-  document.getElementById("newQuoteText").value = "";
-  document.getElementById("newQuoteCategory").value = "";
+  // Reset index if it exceeds length
+  if (currentIndex >= quotes.length) {
+    currentIndex = 0;
+  }
+
+  const quote = quotes[currentIndex];
+  const quoteParagraph = document.createElement("p");
+  quoteParagraph.textContent = `"${quote.text}" — ${quote.category}`;
+  quoteDisplay.appendChild(quoteParagraph);
+
+  currentIndex++;
 }
-
-// Export to JSON file
-function exportToJsonFile() {
-  const blob = new Blob([JSON.stringify(quotes, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.download = "quotes.json";
-  link.href = url;
-  linclick();
-  URL.revokeObjectURL(url);
-}
-
-script.js[+] [unix] (05:05 06/07/2025)                                                                                                                                                  84,6 Bot
--- INSERT --
-
 
